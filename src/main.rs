@@ -227,7 +227,7 @@ fn run() -> Result<()> {
 
     #[cfg(target_os = "openbsd")]
     runner.execute(Step::Pkg, "OpenBSD Packages", || {
-        openbsd::upgrade_packages(ctx.sudo().as_ref(), run_type)
+        openbsd::upgrade_packages(&ctx)
     })?;
 
     #[cfg(target_os = "android")]
@@ -440,7 +440,7 @@ fn run() -> Result<()> {
 
     #[cfg(target_os = "openbsd")]
     runner.execute(Step::System, "OpenBSD Upgrade", || {
-        openbsd::upgrade_openbsd(ctx.sudo().as_ref(), run_type)
+        openbsd::upgrade_openbsd(&ctx)
     })?;
 
     #[cfg(windows)]

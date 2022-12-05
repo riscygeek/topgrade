@@ -1,23 +1,33 @@
-use crate::executor::RunType;
+use crate::execution_context::ExecutionContext;
+use crate::command::CommandExt;
 use crate::terminal::print_separator;
-use crate::utils::require_option;
+use crate::print_warning;
 use color_eyre::eyre::Result;
-use std::path::PathBuf;
 
-pub fn upgrade_openbsd(sudo: Option<&PathBuf>, run_type: RunType) -> Result<()> {
-    let sudo = require_option(sudo, String::from("No sudo detected"))?;
+pub fn upgrade_openbsd(ctx: &ExecutionContext) -> Result<()> {
     print_separator("OpenBSD Update");
-    run_type
-        .execute(sudo)
-        .args(&["/usr/sbin/sysupgrade", "-n"])
-        .status_checked()
+    if let Some(sudo) = ctx.sudo() {
+        ctx
+            .run_type()
+            .execute(sudo)
+            .args(&["/usr/sbin/sysupgrade", "-n"])
+            .status_checked()?;
+    } else {
+        print_warning("No sudo detected. Skipping system upgrade");
+    }
+    Ok(())
 }
 
-pub fn upgrade_packages(sudo: Option<&PathBuf>, run_type: RunType) -> Result<()> {
-    let sudo = require_option(sudo, String::from("No sudo detected"))?;
+pub fn upgrade_packages(ctx: &ExecutionContext) -> Result<()> {
     print_separator("OpenBSD Packages");
-    run_type
-        .execute(sudo)
-        .args(&["/usr/sbin/pkg_add", "-u"])
-        .status_checked()
+    if let Some(sudo) = ctx.sudo() {
+        ctx
+            .run_type()
+            .execute(sudo)
+            .args(&["/usr/sbin/pkg_add", "-u"])
+            .status_checked()?;
+    } else {
+        print_warning("No sudo detected. Skipping system upgrade");
+    }
+    Ok(())
 }
