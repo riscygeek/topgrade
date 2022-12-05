@@ -66,6 +66,9 @@ nix = "~0.24"
 rust-ini = "~0.18"
 self_update_crate = { version = "~0.30", default-features = false, optional = true, package = "self_update", features = ["archive-tar", "compression-flate2", "rustls"] }
 
+[target.'cfg(target_os = "openbsd")'.dependencies]
+uname = "0.1.1"
+
 [target.'cfg(windows)'.dependencies]
 self_update_crate = { version = "~0.30", default-features = false, optional = true, package = "self_update", features = ["archive-zip", "compression-zip-deflate", "rustls"] }
 winapi = "~0.3"

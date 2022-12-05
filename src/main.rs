@@ -439,8 +439,13 @@ fn run() -> Result<()> {
     })?;
 
     #[cfg(target_os = "openbsd")]
+    runner.execute(Step::System, "OpenBSD Patches", || {
+        openbsd::syspatch(&ctx)
+    })?;
+
+    #[cfg(target_os = "openbsd")]
     runner.execute(Step::System, "OpenBSD Upgrade", || {
-        openbsd::upgrade_openbsd(&ctx)
+        openbsd::sysupgrade(&ctx)
     })?;
 
     #[cfg(windows)]
