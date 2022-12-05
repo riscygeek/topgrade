@@ -59,13 +59,13 @@ pub fn sysupgrade(ctx: &ExecutionContext) -> Result<()> {
     let u = Info::new()?;
     let v = Version::new(&u).next();
     let installurl = std::fs::read_to_string("/etc/installurl")
-        .unwrap_or("https://ftp.openbsd.org/pub/OpenBSD".to_string());
+        .unwrap_or_else(|_| "https://ftp.openbsd.org/pub/OpenBSD".to_string());
     let url = format!("{installurl}/{v}/{}/SHA256.sig", u.machine);
 
     // Check if an update exists.
     let out = Command::new("/usr/bin/ftp")
         .args(&["-V", "-o", "-", &url])
-        .output()?;
+        .output_checked()?;
 
     if out.status.success() {
         print_info("New update available for OpenBSD {v}.");
@@ -102,7 +102,7 @@ pub fn syspatch(ctx: &ExecutionContext) -> Result<()> {
             .output()?;
 
         if let Wet(out) = out {
-            if out.stdout.iter().find(|b| **b != b'\n').is_some() {
+            if out.stdout.iter().any(|b| *b != b'\n') {
                 print_info("New patches available:");
 
                 // Print all available patches.
