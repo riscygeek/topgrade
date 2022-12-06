@@ -226,9 +226,7 @@ fn run() -> Result<()> {
     })?;
 
     #[cfg(target_os = "openbsd")]
-    runner.execute(Step::Pkg, "OpenBSD Packages", || {
-        openbsd::upgrade_packages(&ctx)
-    })?;
+    runner.execute(Step::Pkg, "OpenBSD Packages", || openbsd::upgrade_packages(&ctx))?;
 
     #[cfg(target_os = "android")]
     runner.execute(Step::Pkg, "Termux Packages", || android::upgrade_packages(&ctx))?;
@@ -439,14 +437,10 @@ fn run() -> Result<()> {
     })?;
 
     #[cfg(target_os = "openbsd")]
-    runner.execute(Step::System, "OpenBSD Patches", || {
-        openbsd::syspatch(&ctx)
-    })?;
+    runner.execute(Step::System, "OpenBSD Patches", || openbsd::syspatch(&ctx))?;
 
     #[cfg(target_os = "openbsd")]
-    runner.execute(Step::System, "OpenBSD Upgrade", || {
-        openbsd::sysupgrade(&ctx)
-    })?;
+    runner.execute(Step::System, "OpenBSD Upgrade", || openbsd::sysupgrade(&ctx))?;
 
     #[cfg(windows)]
     runner.execute(Step::System, "Windows update", || windows::windows_update(&ctx))?;

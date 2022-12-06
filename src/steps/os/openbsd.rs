@@ -1,11 +1,11 @@
-use std::fmt::{self, Display, Formatter};
-use std::process::Command;
-use crate::execution_context::ExecutionContext;
 use crate::command::CommandExt;
-use crate::terminal::{print_separator, print_info, print_warning};
+use crate::execution_context::ExecutionContext;
 use crate::executor::ExecutorOutput::Wet;
 use crate::sudo::Sudo;
+use crate::terminal::{print_info, print_separator, print_warning};
 use color_eyre::eyre::Result;
+use std::fmt::{self, Display, Formatter};
+use std::process::Command;
 use uname::Info;
 
 #[derive(Debug, Clone, Copy)]
@@ -69,11 +69,10 @@ pub fn sysupgrade(ctx: &ExecutionContext) -> Result<()> {
 
     if out.status.success() {
         print_info("New update available for OpenBSD {v}.");
-        
+
         // Install update without rebooting (-n).
         with_sudo(ctx, |sudo| {
-            ctx
-                .run_type()
+            ctx.run_type()
                 .execute(sudo)
                 .args(&["/usr/sbin/sysupgrade", "-n"])
                 .status_checked()
@@ -83,7 +82,6 @@ pub fn sysupgrade(ctx: &ExecutionContext) -> Result<()> {
     } else {
         print_info("No new updates found. Skipping.");
     }
-
 
     Ok(())
 }
@@ -117,14 +115,13 @@ pub fn syspatch(ctx: &ExecutionContext) -> Result<()> {
                 println!();
 
                 // Install all available patches.
-                ctx
-                    .run_type()
+                ctx.run_type()
                     .execute(sudo)
                     .args(&["/usr/sbin/syspatch"])
                     .status_checked()?;
             } else {
                 print_info("No new available patches. Skipping.");
-            }   
+            }
         }
 
         Ok(())
@@ -135,8 +132,7 @@ pub fn upgrade_packages(ctx: &ExecutionContext) -> Result<()> {
     print_separator("OpenBSD Packages");
 
     with_sudo(ctx, |sudo| {
-        ctx
-            .run_type()
+        ctx.run_type()
             .execute(sudo)
             .args(&["/usr/sbin/pkg_add", "-u"])
             .status_checked()?;
